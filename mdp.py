@@ -1,8 +1,10 @@
+import copy
+
 from GameMap import Map
 
 REWARD = -0.01  # constant reward for non-terminal states
-DISCOUNT = 0.99
-MAX_ERROR = 10 ** (0)
+DISCOUNT = 0.90
+MAX_ERROR = 10 ** (-3)
 
 # dx, dy
 # Down, Left, Up, Right
@@ -28,12 +30,12 @@ def calculate_utility(maze, x, y, action):
 
 
 def value_iteration(maze_origin: Map, source, dest):
-    maze = maze_origin
+    maze = copy.deepcopy(maze_origin)
     print('During the value iteration: \n')
     maze.showNumericMap()
     counter = 0
     while True:
-        next_maze = maze
+        next_maze = copy.deepcopy(maze_origin)
         error = 0
         for y in range(maze.height):
             for x in range(maze.width):
@@ -51,3 +53,37 @@ def value_iteration(maze_origin: Map, source, dest):
         if error < MAX_ERROR * (1 - DISCOUNT) / DISCOUNT:
             break
     return maze
+
+
+def get_optimal_policy(maze: Map, dest):
+    policy = [[-1] * maze.width for _ in range(maze.height)]
+    for y in range(maze.height):
+        for x in range(maze.width):
+            if not maze.isValid(x, y) or not maze.isMovable(x, y) or (x, y) == dest:
+                continue
+            max_action, max_utility = None, -float('inf')
+            for action in range(len(ACTIONS)):
+                utility = calculate_utility(maze, x, y, action)
+                if utility > max_utility:
+                    max_action, max_utility = action, utility
+            policy[y][x] = max_action
+    return policy
+
+
+def print_policy(maze: Map, policy: list, dest):
+    res = ''
+    for y in range(len(policy)):
+        res += '|'
+        for x in range(len(policy[0])):
+            if not maze.isValid(x, y) or not maze.isMovable(x, y):
+                val = 'WALL'
+            elif (x, y) == dest:
+                val = 'GOAL'
+            else:
+                val = ["Down", "Left", "Up", "Right"][policy[y][x]]
+            res += " " + val[:5].ljust(5) + " |"  # format
+        res += '\n'
+    print(res)
+
+
+def draw_policy_on_maze(maze: Map, policy: list, source, dest):

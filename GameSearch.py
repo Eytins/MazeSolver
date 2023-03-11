@@ -7,8 +7,8 @@ from solutions import *
 from mdp import *
 
 REC_SIZE = 10
-REC_WIDTH = 101  # must be odd number
-REC_HEIGHT = 101  # must be odd number
+REC_WIDTH = 11  # must be odd number
+REC_HEIGHT = 11  # must be odd number
 BUTTON_HEIGHT = 30
 BUTTON_WIDTH = 120
 SCREEN_WIDTH = REC_WIDTH * REC_SIZE
@@ -93,7 +93,11 @@ class Game():
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
         elif self.mode == 2:
-            a_star_search(self.map, self.source, self.dest)
+            # a_star_search(self.map, self.source, self.dest)
+            maze = value_iteration(self.map, self.source, self.dest)
+            policy = get_optimal_policy(maze, self.dest)
+            print(policy)
+            print_policy(maze, policy, self.dest)
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
         elif self.mode == 3:
