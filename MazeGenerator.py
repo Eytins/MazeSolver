@@ -1,6 +1,5 @@
 from random import randint, choice
 from GameMap import *
-from AStarSearch import *
 from enum import Enum
 
 
@@ -296,20 +295,3 @@ def generateMap(map, type):
     elif type == MAZE_GENERATOR_TYPE.UNION_FIND_SET:
         doUnionFindSet(map)
 
-
-def run():
-    WIDTH = 31
-    HEIGHT = 21
-
-    map = Map(WIDTH, HEIGHT)
-    generateMap(map, MAZE_GENERATOR_TYPE.UNION_FIND_SET)
-    source = map.generatePos((1, 1), (1, HEIGHT - 1))
-    dest = map.generatePos((WIDTH - 2, WIDTH - 2), (1, HEIGHT - 1))
-    print("source:", source)
-    print("dest:", dest)
-    AStarSearch(map, source, dest)
-    map.showMap()
-
-
-if __name__ == "__main__":
-    run()
