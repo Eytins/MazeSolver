@@ -1,4 +1,3 @@
-from random import randint
 from GameMap import *
 
 
@@ -16,7 +15,7 @@ class SearchEntry():
 
 
 def AStarSearch(map, source, dest):
-    def getNewPosition(map, locatioin, offset):
+    def getNewPosition(map, location, offset):
         x, y = (location.x + offset[0], location.y + offset[1])
         if not map.isValid(x, y) or not map.isMovable(x, y):
             return None
@@ -88,7 +87,7 @@ def AStarSearch(map, source, dest):
         if location is None:
             # not found valid path
             print("can't find valid path")
-            break;
+            break
 
         if location.x == dest.x and location.y == dest.y:
             break
@@ -101,23 +100,3 @@ def AStarSearch(map, source, dest):
     while location is not None:
         map.setMap(location.x, location.y, MAP_ENTRY_TYPE.MAP_PATH)
         location = location.pre_entry
-
-
-def run():
-    WIDTH = 10
-    HEIGHT = 10
-    BLOCK_NUM = 15
-    map = Map(WIDTH, HEIGHT)
-    map.createBlock(BLOCK_NUM)
-    map.showMap()
-
-    source = map.generatePos((0, WIDTH // 3), (0, HEIGHT // 3))
-    dest = map.generatePos((WIDTH // 2, WIDTH - 1), (HEIGHT // 2, HEIGHT - 1))
-    print("source:", source)
-    print("dest:", dest)
-    AStarSearch(map, source, dest)
-    map.showMap()
-
-
-if __name__ == "__main__":
-    run()

@@ -59,16 +59,34 @@ class Map():
         return True
 
     def getType(self, x, y):
-        return map_entry_types[self.map[y][x]]
+        try:
+            return map_entry_types[self.map[y][x]]
+        except:
+            return self.map[y][x]
 
     def showMap(self):
         for row in self.map:
             s = ''
             for entry in row:
                 if entry == 0:
-                    s += ' 0'
+                    s += ' .'
                 elif entry == 1:
                     s += ' #'
                 else:
                     s += ' X'
             print(s)
+
+    def showNumericMap(self):
+        print()
+        print()
+        for row in self.map:
+            s = ''
+            for entry in row:
+                s += '\t' + str(round(entry, 2))
+            print(s)
+
+    def cleanPath(self):
+        for y in range(self.height):
+            for x in range(self.width):
+                if self.getType(x, y) is MAP_ENTRY_TYPE.MAP_PATH:
+                    self.setMap(x, y, MAP_ENTRY_TYPE.MAP_EMPTY)

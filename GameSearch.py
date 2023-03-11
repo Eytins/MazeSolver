@@ -1,14 +1,14 @@
-import pygame
-from pygame.locals import *
 from sys import exit
-from random import randint
-from GameMap import *
+
+import pygame
+
 from MazeGenerator import *
-from AStarSearch import *
+from solutions import *
+from mdp import *
 
 REC_SIZE = 10
-REC_WIDTH = 51  # must be odd number
-REC_HEIGHT = 51  # must be odd number
+REC_WIDTH = 101  # must be odd number
+REC_HEIGHT = 101  # must be odd number
 BUTTON_HEIGHT = 30
 BUTTON_WIDTH = 120
 SCREEN_WIDTH = REC_WIDTH * REC_SIZE
@@ -83,7 +83,7 @@ class Game():
                                  pygame.Rect(REC_SIZE * x, REC_SIZE * y + BUTTON_HEIGHT, REC_SIZE, REC_SIZE))
 
     def generateMaze(self):
-        if self.mode >= 4:
+        if self.mode > 9:
             self.mode = 0
         if self.mode == 0:
             generateMap(self.map, self.maze_type)
@@ -93,9 +93,27 @@ class Game():
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
         elif self.mode == 2:
-            AStarSearch(self.map, self.source, self.dest)
+            a_star_search(self.map, self.source, self.dest)
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
+        elif self.mode == 3:
+            self.map.cleanPath()
+        elif self.mode == 4:
+            bfs_search(self.map, self.source, self.dest)
+            self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
+            self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
+        elif self.mode == 5:
+            self.map.cleanPath()
+        elif self.mode == 6:
+            dfs_search(self.map, self.source, self.dest)
+            self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
+            self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
+        elif self.mode == 7:
+            self.map.cleanPath()
+        elif self.mode == 8:
+            value_iteration(self.map, self.source, self.dest)
+            # self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
+            # self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
         else:
             self.map.resetMap(MAP_ENTRY_TYPE.MAP_EMPTY)
         self.mode += 1
