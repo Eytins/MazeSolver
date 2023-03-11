@@ -1,10 +1,10 @@
 import copy
 
-from GameMap import Map
+from GameMap import Map, MAP_ENTRY_TYPE
 
 REWARD = -0.01  # constant reward for non-terminal states
-DISCOUNT = 0.90
-MAX_ERROR = 10 ** (-3)
+DISCOUNT = 0.99
+MAX_ERROR = 10 ** (-2)
 
 # dx, dy
 # Down, Left, Up, Right
@@ -32,7 +32,7 @@ def calculate_utility(maze, x, y, action):
 def value_iteration(maze_origin: Map, source, dest):
     maze = copy.deepcopy(maze_origin)
     print('During the value iteration: \n')
-    maze.showNumericMap()
+    maze.showNumericMap(dest)
     counter = 0
     while True:
         next_maze = copy.deepcopy(maze_origin)
@@ -47,7 +47,7 @@ def value_iteration(maze_origin: Map, source, dest):
                 # next_maze.setMap(x, y, max([calculate_utility(maze, x, y, action) for action in range(len(ACTIONS))]))
                 error = max(error, abs(next_maze.map[y][x] - maze.map[y][x]))
         maze = next_maze
-        maze.showNumericMap()
+        maze.showNumericMap(dest)
         counter += 1
         print('Iteration times: ', counter)
         if error < MAX_ERROR * (1 - DISCOUNT) / DISCOUNT:
@@ -76,14 +76,20 @@ def print_policy(maze: Map, policy: list, dest):
         res += '|'
         for x in range(len(policy[0])):
             if not maze.isValid(x, y) or not maze.isMovable(x, y):
-                val = 'WALL'
+                val = '#'
             elif (x, y) == dest:
                 val = 'GOAL'
             else:
-                val = ["Down", "Left", "Up", "Right"][policy[y][x]]
+                val = ["v", "<", "^", ">"][policy[y][x]]
             res += " " + val[:5].ljust(5) + " |"  # format
         res += '\n'
     print(res)
 
 
 def draw_policy_on_maze(maze: Map, policy: list, source, dest):
+    x = source[0]
+    y = source[1]
+    while (x, y) != dest:
+        x, y = x + ACTIONS[policy[y][x]][0], y + ACTIONS[policy[y][x]][1]
+        maze.setMap(x, y, MAP_ENTRY_TYPE.MAP_PATH)
+    print('Draw path finished')

@@ -76,14 +76,20 @@ class Map():
                     s += ' X'
             print(s)
 
-    def showNumericMap(self):
-        print()
-        print()
-        for row in self.map:
-            s = ''
-            for entry in row:
-                s += '\t' + str(round(entry, 2))
-            print(s)
+    def showNumericMap(self, dest):
+        res = ''
+        for y in range(self.height):
+            res += '|'
+            for x in range(self.width):
+                if not self.isValid(x, y) or not self.isMovable(x, y):
+                    val = '#'
+                elif dest == (x, y):
+                    val = 'goal'
+                else:
+                    val = str(self.map[y][x])
+                res += ' ' + val[:5].ljust(5) + ' |'
+            res += '\n'
+        print(res)
 
     def cleanPath(self):
         for y in range(self.height):

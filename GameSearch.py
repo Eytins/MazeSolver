@@ -7,8 +7,8 @@ from solutions import *
 from mdp import *
 
 REC_SIZE = 10
-REC_WIDTH = 11  # must be odd number
-REC_HEIGHT = 11  # must be odd number
+REC_WIDTH = 51  # must be odd number
+REC_HEIGHT = 51  # must be odd number
 BUTTON_HEIGHT = 30
 BUTTON_WIDTH = 120
 SCREEN_WIDTH = REC_WIDTH * REC_SIZE
@@ -93,11 +93,7 @@ class Game():
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
         elif self.mode == 2:
-            # a_star_search(self.map, self.source, self.dest)
-            maze = value_iteration(self.map, self.source, self.dest)
-            policy = get_optimal_policy(maze, self.dest)
-            print(policy)
-            print_policy(maze, policy, self.dest)
+            a_star_search(self.map, self.source, self.dest)
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
         elif self.mode == 3:
@@ -115,9 +111,12 @@ class Game():
         elif self.mode == 7:
             self.map.cleanPath()
         elif self.mode == 8:
-            value_iteration(self.map, self.source, self.dest)
-            # self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
-            # self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
+            maze = value_iteration(self.map, self.source, self.dest)
+            policy = get_optimal_policy(maze, self.dest)
+            print_policy(maze, policy, self.dest)
+            draw_policy_on_maze(self.map, policy, self.source, self.dest)
+            self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
+            self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
         else:
             self.map.resetMap(MAP_ENTRY_TYPE.MAP_EMPTY)
         self.mode += 1
