@@ -103,7 +103,7 @@ def draw_policy_on_maze(maze: Map, policy: list, source, dest):
 def policy_evaluation(policy, maze_origin: Map):
     maze = copy.deepcopy(maze_origin)
     while True:
-        next_maze = copy.deepcopy(maze)
+        next_maze = copy.deepcopy(maze_origin)
         error = 0
         for y in range(maze.height):
             for x in range(maze.width):
