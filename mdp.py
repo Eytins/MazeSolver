@@ -29,7 +29,7 @@ def calculate_utility(maze, x, y, action):
     return u
 
 
-def value_iteration(maze_origin: Map, source, dest):
+def value_iteration(maze_origin: Map, dest):
     maze = copy.deepcopy(maze_origin)
     print('During the value iteration: \n')
     maze.showNumericMap(dest)
