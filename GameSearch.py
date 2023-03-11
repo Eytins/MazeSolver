@@ -3,7 +3,6 @@ from sys import exit
 import pygame
 
 from MazeGenerator import *
-from policy import policy_iteration
 from solutions import *
 from mdp import *
 
@@ -87,31 +86,40 @@ class Game():
         if self.mode > 11:
             self.mode = 0
         if self.mode == 0:
+            print('Generate map')
             generateMap(self.map, self.maze_type)
         elif self.mode == 1:
+            print('Generate start and end point')
             self.source = self.map.generatePos((1, 1), (1, self.map.height - 2))
             self.dest = self.map.generatePos((self.map.width - 2, self.map.width - 2), (1, self.map.height - 2))
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
         elif self.mode == 2:
+            print('Solve the maze using A*')
             a_star_search(self.map, self.source, self.dest)
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
         elif self.mode == 3:
+            print('Clean path')
             self.map.cleanPath()
         elif self.mode == 4:
+            print('Solve the maze using BFS')
             bfs_search(self.map, self.source, self.dest)
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
         elif self.mode == 5:
+            print('Clean path')
             self.map.cleanPath()
         elif self.mode == 6:
+            print('Solve the maze using DFS')
             dfs_search(self.map, self.source, self.dest)
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
         elif self.mode == 7:
+            print('Clean path')
             self.map.cleanPath()
         elif self.mode == 8:
+            print('Solve the maze using Value Iteration')
             maze = value_iteration(self.map, self.dest)
             policy = get_optimal_policy(maze, self.dest)
             print_policy(maze, policy, self.dest)
@@ -119,9 +127,13 @@ class Game():
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
         elif self.mode == 9:
+            print('Clean path')
             self.map.cleanPath()
         elif self.mode == 10:
-            maze = policy_iteration(self.map, self.dest)
+            print('Solve the maze using Policy Iteration')
+            policy = policy_iteration(self.map, self.dest)
+            print_policy(self.map, policy, self.dest)
+            draw_policy_on_maze(self.map, policy, self.source, self.dest)
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
 
