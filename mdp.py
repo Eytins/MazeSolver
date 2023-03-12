@@ -9,7 +9,7 @@ MAX_ERROR_VALUE = 10 ** (-2)
 
 REWARD_POLICY = -0.01  # constant reward for non-terminal states
 DISCOUNT_POLICY = 0.99
-MAX_ERROR_POLICY = 10 ** (-2)
+MAX_ERROR_POLICY = 10 ** (-3)
 
 # dx, dy
 # Down, Left, Up, Right
@@ -48,7 +48,9 @@ def value_iteration(maze_origin: Map, dest):
                 if not maze.isValid(x, y) or not maze.isMovable(x, y) or (x, y) == dest:
                     continue
                 # Bellman update
-                next_maze.map[y][x] = max([calculate_utility(maze, x, y, action, REWARD_VALUE, DISCOUNT_VALUE) for action in range(len(ACTIONS))])
+                next_maze.map[y][x] = max(
+                    [calculate_utility(maze, x, y, action, REWARD_VALUE, DISCOUNT_VALUE) for action in
+                     range(len(ACTIONS))])
                 # next_maze.setMap(x, y, max([calculate_utility(maze, x, y, action) for action in range(len(ACTIONS))]))
                 error = max(error, abs(next_maze.map[y][x] - maze.map[y][x]))
         maze = next_maze
@@ -100,14 +102,14 @@ def draw_policy_on_maze(maze: Map, policy: list, source, dest):
     print('Draw path finished')
 
 
-def policy_evaluation(policy, maze_origin: Map):
+def policy_evaluation(policy, maze_origin: Map, dest):
     maze = copy.deepcopy(maze_origin)
     while True:
         next_maze = copy.deepcopy(maze_origin)
         error = 0
         for y in range(maze.height):
             for x in range(maze.width):
-                if not maze.isValid(x, y) or not maze.isMovable(x, y):
+                if not maze_origin.isValid(x, y) or not maze_origin.isMovable(x, y) or (x, y) == dest:
                     continue
                 next_maze.map[y][x] = calculate_utility(maze, x, y, policy[y][x], REWARD_POLICY, DISCOUNT_POLICY)
                 error = max(error, abs(next_maze.map[y][x] - maze.map[y][x]))
@@ -118,14 +120,17 @@ def policy_evaluation(policy, maze_origin: Map):
 
 
 def policy_iteration(maze: Map, dest):
-    policy = [[random.randint(0, 3) for _ in range(maze.width)] for _ in range(maze.height)]  # construct a random policy
+    policy = [[random.randint(0, 3) for _ in range(maze.width)] for _ in
+              range(maze.height)]  # construct a random policy
     print("During the policy iteration:\n")
+    counter = 0
     while True:
-        maze = policy_evaluation(policy, maze)
+        counter += 1
+        maze = policy_evaluation(policy, maze, dest)
         unchanged = True
         for y in range(maze.height):
             for x in range(maze.width):
-                if not maze.isValid(x, y) or not maze.isMovable(x, y):
+                if not maze.isValid(x, y) or not maze.isMovable(x, y) or (x, y) == dest:
                     continue
                 max_action, max_utility = None, -float('inf')
                 for action in range(len(ACTIONS)):
@@ -138,4 +143,5 @@ def policy_iteration(maze: Map, dest):
         if unchanged:
             break
         print_policy(maze, policy, dest)
+        print('Iteration times: ', counter)
     return policy

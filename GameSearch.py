@@ -7,8 +7,8 @@ from solutions import *
 from mdp import *
 
 REC_SIZE = 10
-REC_WIDTH = 11  # must be odd number
-REC_HEIGHT = 11  # must be odd number
+REC_WIDTH = 21  # must be odd number
+REC_HEIGHT = 21  # must be odd number
 BUTTON_HEIGHT = 30
 BUTTON_WIDTH = 120
 SCREEN_WIDTH = REC_WIDTH * REC_SIZE
