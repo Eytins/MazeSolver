@@ -1,3 +1,4 @@
+import time
 from sys import exit
 
 import pygame
@@ -6,9 +7,9 @@ from MazeGenerator import *
 from solutions import *
 from mdp import *
 
+REC_WIDTH = 101  # must be odd number
+REC_HEIGHT = 101  # must be odd number
 REC_SIZE = 10
-REC_WIDTH = 21  # must be odd number
-REC_HEIGHT = 21  # must be odd number
 BUTTON_HEIGHT = 30
 BUTTON_WIDTH = 120
 SCREEN_WIDTH = REC_WIDTH * REC_SIZE
@@ -120,10 +121,13 @@ class Game():
             self.map.cleanPath()
         elif self.mode == 8:
             print('Solve the maze using Value Iteration')
+            start_time = time.time()
             maze = value_iteration(self.map, self.dest)
+            end_time = time.time()
             policy = get_optimal_policy(maze, self.dest)
             print_policy(maze, policy, self.dest)
             draw_policy_on_maze(self.map, policy, self.source, self.dest)
+            print('Time consumed using Value Iteration: ', end_time - start_time)
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
         elif self.mode == 9:
@@ -131,9 +135,12 @@ class Game():
             self.map.cleanPath()
         elif self.mode == 10:
             print('Solve the maze using Policy Iteration')
+            start_time = time.time()
             policy = policy_iteration(self.map, self.dest)
+            end_time = time.time()
             print_policy(self.map, policy, self.dest)
             draw_policy_on_maze(self.map, policy, self.source, self.dest)
+            print('Time consumed using Policy Iteration: ', end_time - start_time)
             self.map.setMap(self.source[0], self.source[1], MAP_ENTRY_TYPE.MAP_TARGET)
             self.map.setMap(self.dest[0], self.dest[1], MAP_ENTRY_TYPE.MAP_TARGET)
 

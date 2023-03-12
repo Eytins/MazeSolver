@@ -1,3 +1,5 @@
+from memory_profiler import profile
+
 from GameMap import MAP_ENTRY_TYPE
 from collections import deque
 

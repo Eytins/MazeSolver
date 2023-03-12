@@ -1,11 +1,13 @@
 import copy
 import random
 
+from memory_profiler import profile
+
 from GameMap import Map, MAP_ENTRY_TYPE
 
 REWARD_VALUE = -0.01  # constant reward for non-terminal states
 DISCOUNT_VALUE = 0.99
-MAX_ERROR_VALUE = 10 ** (-2)
+MAX_ERROR_VALUE = 10 ** (-3)
 
 REWARD_POLICY = -0.01  # constant reward for non-terminal states
 DISCOUNT_POLICY = 0.99
@@ -39,11 +41,13 @@ def value_iteration(maze_origin: Map, dest):
     print('During the value iteration: \n')
     maze.showNumericMap(dest)
     counter = 0
+    loop_counter = 0
     while True:
         next_maze = copy.deepcopy(maze_origin)
         error = 0
         for y in range(maze.height):
             for x in range(maze.width):
+                loop_counter += 4
                 # if () this is the wall/goal
                 if not maze.isValid(x, y) or not maze.isMovable(x, y) or (x, y) == dest:
                     continue
@@ -56,9 +60,10 @@ def value_iteration(maze_origin: Map, dest):
         maze = next_maze
         maze.showNumericMap(dest)
         counter += 1
-        print('Iteration times: ', counter)
+        print('Iteration count: ', counter)
         if error < MAX_ERROR_VALUE * (1 - DISCOUNT_VALUE) / DISCOUNT_VALUE:
             break
+    print('Loop count: ', loop_counter)
     return maze
 
 
@@ -102,13 +107,14 @@ def draw_policy_on_maze(maze: Map, policy: list, source, dest):
     print('Draw path finished')
 
 
-def policy_evaluation(policy, maze_origin: Map, dest):
+def policy_evaluation(policy, maze_origin: Map, dest, loop_counter):
     maze = copy.deepcopy(maze_origin)
     while True:
         next_maze = copy.deepcopy(maze_origin)
         error = 0
         for y in range(maze.height):
             for x in range(maze.width):
+                loop_counter += 1
                 if not maze_origin.isValid(x, y) or not maze_origin.isMovable(x, y) or (x, y) == dest:
                     continue
                 next_maze.map[y][x] = calculate_utility(maze, x, y, policy[y][x], REWARD_POLICY, DISCOUNT_POLICY)
@@ -116,7 +122,7 @@ def policy_evaluation(policy, maze_origin: Map, dest):
         maze = next_maze
         if error < MAX_ERROR_POLICY * (1 - DISCOUNT_VALUE) / DISCOUNT_VALUE:
             break
-    return maze
+    return maze, loop_counter
 
 
 def policy_iteration(maze: Map, dest):
@@ -124,9 +130,10 @@ def policy_iteration(maze: Map, dest):
               range(maze.height)]  # construct a random policy
     print("During the policy iteration:\n")
     counter = 0
+    loop_counter = 0
     while True:
         counter += 1
-        maze = policy_evaluation(policy, maze, dest)
+        maze, loop_counter = policy_evaluation(policy, maze, dest, loop_counter)
         unchanged = True
         for y in range(maze.height):
             for x in range(maze.width):
@@ -134,6 +141,7 @@ def policy_iteration(maze: Map, dest):
                     continue
                 max_action, max_utility = None, -float('inf')
                 for action in range(len(ACTIONS)):
+                    loop_counter += 1
                     utility = calculate_utility(maze, x, y, action, REWARD_POLICY, DISCOUNT_POLICY)
                     if utility > max_utility:
                         max_action, max_utility = action, utility
@@ -144,4 +152,5 @@ def policy_iteration(maze: Map, dest):
             break
         print_policy(maze, policy, dest)
         print('Iteration times: ', counter)
+    print('Loop count: ', loop_counter)
     return policy
