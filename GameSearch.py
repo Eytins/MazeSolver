@@ -7,8 +7,8 @@ from MazeGenerator import *
 from solutions import *
 from mdp import *
 
-REC_WIDTH = 101  # must be odd number
-REC_HEIGHT = 101  # must be odd number
+REC_WIDTH = 51  # must be odd number
+REC_HEIGHT = 51  # must be odd number
 REC_SIZE = 10
 BUTTON_HEIGHT = 30
 BUTTON_WIDTH = 120
